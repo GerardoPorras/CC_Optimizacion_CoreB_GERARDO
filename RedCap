@@ -1,0 +1,373 @@
+dat <- read.csv("C:/Users/jerry/OneDrive/Escritorio/ICEMR2.0_P1_S01_SE_Masterlong_23052023_CAA_v1.csv")
+dict <- read_xlsx("C:/Users/jerry/OneDrive/Escritorio/DataDictionary22.xlsx")
+
+#### Funcion para RedCap
+redcap_dict_toDF <- function(texto){
+  pos1 <- 1
+  pos2 <-regexpr(pattern = "|", text=texto,fixed=T)+pos1
+  text_lev1 <- substring(texto, first=pos1, last=pos2-3)
+  text_lev1
+  index_c <- str_extract(text_lev1, "[0-9]+")
+  pos_text1 <- regexpr(pattern="[0-9]+",text=text_lev1)
+  text_descriptive_c <- substring(text_lev1, first=pos_text1+3, last=nchar(text_lev1))
+  
+  index_c
+  text_descriptive_c
+  
+  # Lev2
+  
+  text1="|"
+  while(regexpr(pattern = "|", text=text1,fixed=T)!=-1){
+    pos1 <- pos2+1
+    text1 <- substring(texto, first=pos1, last=nchar(texto)); text1
+    pos2 <- regexpr(pattern = "|", text=text1,fixed=T)+pos1-3+3
+    pos2_f <- pos2-3
+    
+    if(regexpr(pattern = "|", text=text1,fixed=T)==-1){
+      pos2_f=nchar(texto)+1}
+    else{pos2_f<-pos2_f}
+    
+    text_lev2 <- substring(texto, first=pos1, last=pos2_f)
+    text_lev2
+    pos_text1 <- regexpr(pattern="[0-9]+",text=text_lev2)
+    text_descriptive <- substring(text_lev2, first=pos_text1+3, last=nchar(text_lev2))
+    index <- str_extract(text_lev2, "[0-9]+")
+    
+    index_c <- c(index_c,index)
+    text_descriptive_c <- c(text_descriptive_c, text_descriptive)
+    
+  }
+  
+  res <- data.frame(index_c, text_descriptive_c)
+  return(res)
+  
+}
+
+###### 
+#VARIABLE home_head_v
+
+Opt <- dict%>%filter(Sub_groups=="home") %>% 
+  pull("Choices..Calculations..OR.Slider.Labels")
+Opt
+
+dict_choise <- redcap_dict_toDF(Opt[1])
+dict_choise$index_c
+
+ev1 <- is.na(dat$home_head_v)
+ev2 <- !c(dat$home_head_v)%in%c(dict_choise$index_c,NA)
+
+text1<-rep(NA,length(ev1))
+text1[ev1]<-"No hay informacion disponible para home_head_v"
+text1
+
+text2<-rep(NA,length(ev1))
+text2[ev2]<- "home_head_v muestra valores fuera del rango descrito en el diccionario"
+text2
+
+text1
+text2
+
+joint_obs <- function(x){
+  if(all(is.na(x))){ 
+    result <-NA}
+  else{
+    result <- paste0(na.omit(x),collapse = "; ")
+  }
+}
+
+mat <- data.frame(text1, text2)
+
+obs1 <- apply(mat,MARGIN=1,FUN=joint_obs)
+obs1
+
+#####
+#VARIABLE home_type_v
+
+Opt <- dict%>%filter(Sub_groups=="home") %>% 
+  pull("Choices..Calculations..OR.Slider.Labels")
+Opt
+
+dict_choise <- redcap_dict_toDF(Opt[8])
+dict_choise$index_c
+
+ev1 <- is.na(dat$home_type_v)
+ev2 <- !c(dat$home_type_v)%in%c(dict_choise$index_c,NA)
+
+text1<-rep(NA,length(ev1))
+text1[ev1]<-"No hay informacion disponible para home_type_v"
+text1
+
+text2<-rep(NA,length(ev1))
+
+if (any(dat$home_head_v != 1, na.rm = TRUE)) {
+  text2[ev2] <- "No cumple con home_head_v"
+} else {
+  text2[ev2] <- "home_type_v muestra valores fuera del rango descrito en el diccionario"
+}
+text1
+text2
+
+joint_obs <- function(x){
+  if(all(is.na(x))){ 
+    result <-NA}
+  else{
+    result <- paste0(na.omit(x),collapse = "; ")
+  }
+}
+
+mat <- data.frame(text1, text2)
+
+obs2 <- apply(mat,MARGIN=1,FUN=joint_obs)
+obs2
+
+###### 
+#VARIABLE home_walls_v
+
+Opt <- dict%>%filter(Sub_groups=="home") %>% 
+  pull("Choices..Calculations..OR.Slider.Labels")
+Opt
+
+dict_choise <- redcap_dict_toDF(Opt[10])
+dict_choise$index_c
+
+ev1 <- is.na(dat$home_walls_v)
+ev2 <- !c(dat$home_walls_v)%in%c(dict_choise$index_c,NA)
+
+text1<-rep(NA,length(ev1))
+text1[ev1]<-"No hay informacion disponible para home_walls_v"
+text1
+
+text2<-rep(NA,length(ev1))
+#text2[ev2]<- "home_walls_v muestra valores fuera del rango descrito en el diccionario"
+#text2
+if (any(dat$home_head_v != 1, na.rm = TRUE)) {
+  text2[ev2] <- "No cumple con home_head_v"
+} else {
+  text2[ev2] <- "home_walls_v muestra valores fuera del rango descrito en el diccionario"
+}
+
+text1
+text2
+
+joint_obs <- function(x){
+  if(all(is.na(x))){ 
+    result <-NA}
+  else{
+    result <- paste0(na.omit(x),collapse = "; ")
+  }
+}
+
+mat <- data.frame(text1, text2)
+
+obs3 <- apply(mat,MARGIN=1,FUN=joint_obs)
+obs3
+
+###### 
+#VARIABLE home_floor_v
+
+Opt <- dict%>%filter(Sub_groups=="home") %>% 
+  pull("Choices..Calculations..OR.Slider.Labels")
+Opt
+
+dict_choise <- redcap_dict_toDF(Opt[12])
+dict_choise$index_c
+
+ev1 <- is.na(dat$home_floor_v)
+ev2 <- !c(dat$home_floor_v)%in%c(dict_choise$index_c,NA)
+
+text1<-rep(NA,length(ev1))
+text1[ev1]<-"No hay informacion disponible para home_floor_v"
+text1
+
+text2<-rep(NA,length(ev1))
+#text2[ev2]<- "home_floor_v muestra valores fuera del rango descrito en el diccionario"
+#text2
+if (any(dat$home_head_v != 1, na.rm = TRUE)) {
+  text2[ev2] <- "No cumple con home_head_v"
+} else {
+  text2[ev2] <- "home_floor_v muestra valores fuera del rango descrito en el diccionario"
+}
+
+text1
+text2
+
+joint_obs <- function(x){
+  if(all(is.na(x))){ 
+    result <-NA}
+  else{
+    result <- paste0(na.omit(x),collapse = "; ")
+  }
+}
+
+mat <- data.frame(text1, text2)
+
+obs4 <- apply(mat,MARGIN=1,FUN=joint_obs)
+obs4
+
+###### 
+#VARIABLE home_roof_v
+
+Opt <- dict%>%filter(Sub_groups=="home") %>% 
+  pull("Choices..Calculations..OR.Slider.Labels")
+Opt
+
+dict_choise <- redcap_dict_toDF(Opt[14])
+dict_choise$index_c
+
+ev1 <- is.na(dat$home_roof_v)
+ev2 <- !c(dat$home_roof_v)%in%c(dict_choise$index_c,NA)
+
+text1<-rep(NA,length(ev1))
+text1[ev1]<-"No hay informacion disponible para home_roof_v"
+text1
+
+text2<-rep(NA,length(ev1))
+#text2[ev2]<- "home_roof_v muestra valores fuera del rango descrito en el diccionario"
+#text2
+if (any(dat$home_head_v != 1, na.rm = TRUE)) {
+  text2[ev2] <- "No cumple con home_head_v"
+} else {
+  text2[ev2] <- "home_roof_v muestra valores fuera del rango descrito en el diccionario"
+}
+
+text1
+text2
+
+joint_obs <- function(x){
+  if(all(is.na(x))){ 
+    result <-NA}
+  else{
+    result <- paste0(na.omit(x),collapse = "; ")
+  }
+}
+
+mat <- data.frame(text1, text2)
+
+obs5 <- apply(mat,MARGIN=1,FUN=joint_obs)
+obs5
+
+###### 
+#VARIABLE home_water_v
+
+Opt <- dict%>%filter(Sub_groups=="home") %>% 
+  pull("Choices..Calculations..OR.Slider.Labels")
+Opt
+
+dict_choise <- redcap_dict_toDF(Opt[16])
+dict_choise$index_c
+
+ev1 <- is.na(dat$home_water_v)
+ev2 <- !c(dat$home_water_v)%in%c(dict_choise$index_c,NA)
+
+text1<-rep(NA,length(ev1))
+text1[ev1]<-"No hay informacion disponible para home_water_v"
+text1
+
+text2<-rep(NA,length(ev1))
+#text2[ev2]<- "home_roof_v muestra valores fuera del rango descrito en el diccionario"
+#text2
+if (any(dat$home_head_v != 1, na.rm = TRUE)) {
+  text2[ev2] <- "No cumple con home_head_v"
+} else {
+  text2[ev2] <- "home_water_v muestra valores fuera del rango descrito en el diccionario"
+}
+
+text1
+text2
+
+joint_obs <- function(x){
+  if(all(is.na(x))){ 
+    result <-NA}
+  else{
+    result <- paste0(na.omit(x),collapse = "; ")
+  }
+}
+
+mat <- data.frame(text1, text2)
+
+obs6 <- apply(mat,MARGIN=1,FUN=joint_obs)
+obs6
+
+###### 
+#VARIABLE home_bathroom_v
+
+Opt <- dict%>%filter(Sub_groups=="home") %>% 
+  pull("Choices..Calculations..OR.Slider.Labels")
+Opt
+
+dict_choise <- redcap_dict_toDF(Opt[18])
+dict_choise$index_c
+
+ev1 <- is.na(dat$home_bathroom_v)
+ev2 <- !c(dat$home_bathroom_v)%in%c(dict_choise$index_c,NA)
+
+text1<-rep(NA,length(ev1))
+text1[ev1]<-"No hay informacion disponible para home_bathroom_v"
+text1
+
+text2<-rep(NA,length(ev1))
+#text2[ev2]<- "home_roof_v muestra valores fuera del rango descrito en el diccionario"
+#text2
+if (any(dat$home_head_v != 1, na.rm = TRUE)) {
+  text2[ev2] <- "No cumple con home_head_v"
+} else {
+  text2[ev2] <- "home_bathroom_v muestra valores fuera del rango descrito en el diccionario"
+}
+
+text1
+text2
+
+joint_obs <- function(x){
+  if(all(is.na(x))){ 
+    result <-NA}
+  else{
+    result <- paste0(na.omit(x),collapse = "; ")
+  }
+}
+
+mat <- data.frame(text1, text2)
+
+obs7 <- apply(mat,MARGIN=1,FUN=joint_obs)
+obs7
+
+###### 
+#VARIABLE home_fuel_v
+
+Opt <- dict%>%filter(Sub_groups=="home") %>% 
+  pull("Choices..Calculations..OR.Slider.Labels")
+Opt
+
+dict_choise <- redcap_dict_toDF(Opt[20])
+dict_choise$index_c
+
+ev1 <- is.na(dat$home_fuel_v)
+ev2 <- !c(dat$home_fuel_v)%in%c(dict_choise$index_c,NA)
+
+text1<-rep(NA,length(ev1))
+text1[ev1]<-"No hay informacion disponible para home_fuel_v"
+text1
+
+text2<-rep(NA,length(ev1))
+#text2[ev2]<- "home_roof_v muestra valores fuera del rango descrito en el diccionario"
+#text2
+if (any(dat$home_head_v != 1, na.rm = TRUE)) {
+  text2[ev2] <- "No cumple con home_head_v"
+} else {
+  text2[ev2] <- "home_fuel_v muestra valores fuera del rango descrito en el diccionario"
+}
+
+text1
+text2
+
+joint_obs <- function(x){
+  if(all(is.na(x))){ 
+    result <-NA}
+  else{
+    result <- paste0(na.omit(x),collapse = "; ")
+  }
+}
+
+mat <- data.frame(text1, text2)
+
+obs8 <- apply(mat,MARGIN=1,FUN=joint_obs)
+obs8
